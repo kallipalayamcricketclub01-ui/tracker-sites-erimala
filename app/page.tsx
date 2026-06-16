@@ -22,7 +22,12 @@ export default function Home() {
   // Load saved data on mount
   useEffect(() => {
     const savedData = loadFromLocalStorage()
-    if (savedData) {
+
+    if (
+      savedData &&
+      savedData.results?.bmr !== undefined &&
+      savedData.results?.waterIntake !== undefined
+    ) {
       setUserData(savedData.userData)
       setGoal(savedData.goal)
       setResults(savedData.results)
@@ -148,24 +153,129 @@ export default function Home() {
           )}
 
           {step === 'results' && results && (
-            <div id="results-dashboard" className="space-y-8">
-              {/* Main Metrics Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <StatCard label="Daily Calories" value={results.goalCalories} unit="kcal" icon="🔥" gradient="from-orange-500 to-red-400" animationDelay={0} />
-                <StatCard label="Protein" value={results.protein} unit="g" icon="💪" gradient="from-yellow-500 to-orange-400" animationDelay={0.1} />
-                <StatCard label="Carbohydrates" value={results.carbs} unit="g" icon="🌾" gradient="from-green-500 to-emerald-400" animationDelay={0.2} />
-                <StatCard label="Fat" value={results.fat} unit="g" icon="🥑" gradient="from-blue-500 to-cyan-400" animationDelay={0.3} />
-                <StatCard label="Fiber" value={results.fiber} unit="g" icon="🥗" gradient="from-purple-500 to-pink-400" animationDelay={0.4} />
-                <StatCard
-                  label="BMI"
-                  value={results.bmi}
-                  unit="kg/m²"
-                  icon="⚖️"
-                  gradient={results.bmiCategory === 'normal' ? 'from-green-500 to-emerald-400' : results.bmiCategory === 'underweight' ? 'from-blue-500 to-cyan-400' : results.bmiCategory === 'overweight' ? 'from-yellow-500 to-orange-400' : 'from-red-500 to-rose-400'}
-                  animationDelay={0.5}
-                />
-              </div>
+              <div id="results-dashboard" className="space-y-8">
 
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+  {/* Nutrition */}
+  <StatCard
+    label="Daily Calories"
+    value={results.goalCalories}
+    unit="kcal"
+    icon="🔥"
+    gradient="from-orange-500 to-red-400"
+    animationDelay={0}
+  />
+
+  <StatCard
+    label="Protein"
+    value={results.protein}
+    unit="g"
+    icon="💪"
+    gradient="from-yellow-500 to-orange-400"
+    animationDelay={0.1}
+  />
+
+  <StatCard
+    label="Carbohydrates"
+    value={results.carbs}
+    unit="g"
+    icon="🌾"
+    gradient="from-green-500 to-emerald-400"
+    animationDelay={0.2}
+  />
+
+  <StatCard
+    label="Fat"
+    value={results.fat}
+    unit="g"
+    icon="🥑"
+    gradient="from-blue-500 to-cyan-400"
+    animationDelay={0.3}
+  />
+
+  <StatCard
+    label="Fiber"
+    value={results.fiber}
+    unit="g"
+    icon="🥗"
+    gradient="from-purple-500 to-pink-400"
+    animationDelay={0.4}
+  />
+
+  <StatCard
+    label="Water Intake"
+    value={results.waterIntake}
+    unit="L"
+    icon="💧"
+    gradient="from-cyan-500 to-blue-400"
+    animationDelay={0.5}
+  />
+
+  {/* Metabolism */}
+  <StatCard
+    label="BMR"
+    value={results.bmr}
+    unit="kcal"
+    icon="🫀"
+    gradient="from-red-500 to-pink-400"
+    animationDelay={0.6}
+  />
+
+  <StatCard
+    label="TDEE"
+    value={results.tdee}
+    unit="kcal"
+    icon="🏃"
+    gradient="from-orange-500 to-yellow-400"
+    animationDelay={0.7}
+  />
+
+  <StatCard
+    label="BMI"
+    value={results.bmi}
+    unit="kg/m²"
+    icon="⚖️"
+    gradient={
+      results.bmiCategory === 'normal'
+        ? 'from-green-500 to-emerald-400'
+        : results.bmiCategory === 'underweight'
+        ? 'from-blue-500 to-cyan-400'
+        : results.bmiCategory === 'overweight'
+        ? 'from-yellow-500 to-orange-400'
+        : 'from-red-500 to-rose-400'
+    }
+    animationDelay={0.8}
+  />
+
+  {/* Goals */}
+  <StatCard
+    label="Ideal Weight"
+    value={results.idealWeight}
+    unit="kg"
+    icon="🎯"
+    gradient="from-green-500 to-emerald-400"
+    animationDelay={0.9}
+  />
+
+  <StatCard
+    label="Weight Difference"
+    value={results.weightDifference}
+    unit="kg"
+    icon="📉"
+    gradient="from-purple-500 to-pink-400"
+    animationDelay={1.0}
+  />
+
+  <StatCard
+    label="Daily Step Goal"
+    value={results.stepGoal}
+    icon="👣"
+    gradient="from-indigo-500 to-blue-400"
+    animationDelay={1.1}
+  />
+
+</div>
               {/* BMI Info Card */}
               <div className="p-6 rounded-2xl border border-white/10 backdrop-blur-xl bg-white/5 animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
                 <h3 className="text-lg font-semibold text-foreground mb-2">BMI Classification</h3>
@@ -179,6 +289,23 @@ export default function Home() {
                   {results.bmiCategory === 'obese' && 'Your BMI is significantly above normal. Consider consulting with a healthcare provider.'}
                 </p>
               </div>
+              <div className="p-6 rounded-2xl border border-white/10 backdrop-blur-xl bg-white/5">
+  <h3 className="text-lg font-semibold mb-4">
+    Recommended Exercise Plan
+  </h3>
+
+  <div className="space-y-2">
+    {results.exerciseRecommendation?.map((item, index) => (
+      <div
+        key={index}
+        className="flex items-center gap-3"
+      >
+        <span className="text-green-400">✓</span>
+        <span>{item}</span>
+      </div>
+    ))}
+  </div>
+</div>
 
               {/* Charts */}
               <MacroCharts protein={results.protein} carbs={results.carbs} fat={results.fat} goalCalories={results.goalCalories} />
@@ -209,5 +336,6 @@ export default function Home() {
         </div>
       </div>
     </main>
+    
   )
 }

@@ -19,7 +19,105 @@ export interface CalculationResults {
   carbs: number
   bmi: number
   bmiCategory: BMICategory
+  bmr: number
+  tdee: number
+  waterIntake: number
+  idealWeight: number
+  weightDifference: number
+  stepGoal: string
+  exerciseRecommendation: string[]
 }
+
+export function calculateBMR(
+  weight: number,
+  height: number,
+  age: number,
+  sex: 'male' | 'female'
+): number {
+  if (sex === 'male') {
+    return Math.round(
+      10 * weight +
+      6.25 * height -
+      5 * age +
+      5
+    )
+  }
+
+  return Math.round(
+    10 * weight +
+    6.25 * height -
+    5 * age -
+    161
+  )
+}
+
+export function calculateWaterIntake(
+  weight: number
+): number {
+  return Math.round((weight * 35) / 100) / 10
+}
+
+export function calculateIdealWeight(
+  height: number
+): number {
+  const heightMeters = height / 100
+
+  return Math.round(
+    22 * heightMeters * heightMeters
+  )
+}
+
+export function calculateWeightDifference(
+  currentWeight: number,
+  idealWeight: number
+): number {
+  return Math.round(
+    Math.abs(currentWeight - idealWeight)
+  )
+}
+
+export function getStepGoal(
+  goal: Goal
+): string {
+  switch (goal) {
+    case 'weight_loss':
+      return '10,000 - 12,000'
+
+    case 'maintenance':
+      return '8,000 - 10,000'
+
+    case 'weight_gain':
+      return '6,000 - 8,000'
+  }
+}
+
+export function getExerciseRecommendation(
+  goal: Goal
+): string[] {
+  switch (goal) {
+    case 'weight_loss':
+      return [
+        '10,000+ daily steps',
+        'Strength training 3-4x/week',
+        'Cardio 2-3x/week',
+      ]
+
+    case 'maintenance':
+      return [
+        '8,000+ daily steps',
+        'Strength training 3x/week',
+        'Active lifestyle',
+      ]
+
+    case 'weight_gain':
+      return [
+        'Strength training 4-5x/week',
+        'Progressive overload',
+        'Limit excessive cardio',
+      ]
+  }
+}
+
 
 const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
   sedentary: 1.2,
@@ -97,16 +195,64 @@ export function calculateAll(
   )
   const goalCalories = calculateGoalCalories(maintenanceCalories, goal)
   const macros = calculateMacros(userData.weight, goalCalories)
-  const bmi = calculateBMI(userData.weight, userData.height)
-  const bmiCategory = getBMICategory(bmi)
+const bmi = calculateBMI(
+  userData.weight,
+  userData.height
+)
+
+const bmiCategory =
+  getBMICategory(bmi)
+  const bmr = calculateBMR(
+  userData.weight,
+  userData.height,
+  userData.age,
+  userData.sex
+)
+
+const tdee = maintenanceCalories
+
+const waterIntake =
+  calculateWaterIntake(
+    userData.weight
+  )
+
+const idealWeight =
+  calculateIdealWeight(
+    userData.height
+  )
+
+const weightDifference =
+  calculateWeightDifference(
+    userData.weight,
+    idealWeight
+  )
+
+const stepGoal =
+  getStepGoal(goal)
+
+const exerciseRecommendation =
+  getExerciseRecommendation(goal)
 
   return {
-    maintenanceCalories,
-    goalCalories,
-    ...macros,
-    bmi,
-    bmiCategory,
-  }
+  maintenanceCalories,
+  goalCalories,
+
+  ...macros,
+
+  bmi,
+  bmiCategory,
+
+  bmr,
+  tdee,
+
+  waterIntake,
+
+  idealWeight,
+  weightDifference,
+
+  stepGoal,
+  exerciseRecommendation,
+}
 }
 
 export function getBMICategoryLabel(category: BMICategory): string {

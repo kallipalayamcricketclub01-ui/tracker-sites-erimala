@@ -117,13 +117,6 @@ className={`relative p-8 rounded-2xl border-2 transition-all duration-300 text-l
         ))}
       </div>
 
-      {selectedGoal && (
-        <div className="mt-8 flex justify-center">
-          <Button className="px-8 py-3 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold rounded-lg transition-all">
-            Calculate Results
-          </Button>
-        </div>
-      )}
     </div>
   )
 }
