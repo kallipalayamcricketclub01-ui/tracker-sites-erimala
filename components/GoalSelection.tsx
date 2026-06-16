@@ -51,6 +51,11 @@ function getRecommendedGoal(
 
 export function GoalSelection({ onSelect, selectedGoal,  weight,
   height, }: GoalSelectionProps) {
+    console.log({
+  weight,
+  height,
+  bmi: weight / ((height / 100) ** 2)
+})
     const recommendedGoal =
   getRecommendedGoal(weight, height)
   return (

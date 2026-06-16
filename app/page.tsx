@@ -126,7 +126,14 @@ export default function Home() {
 
           {step === 'goal_selection' && (
             <div>
-              <GoalSelection onSelect={handleGoalSelect} selectedGoal={goal} />
+{userData && (
+  <GoalSelection
+    onSelect={handleGoalSelect}
+    selectedGoal={goal}
+    weight={userData.weight}
+    height={userData.height}
+  />
+)}
               {goal && (
                 <div className="mt-8 flex justify-center">
                   <Button
